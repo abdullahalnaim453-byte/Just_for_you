@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3D Romantic Mobile-Friendly Portal</title>
+    
+    <!-- Tailwind CSS & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: #1a000c;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            perspective: 1000px;
+            color: #fff;
+        }
+
+        /* Mobile Background Canvas */
+        #loginCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* --- 1. MOBILE OPTIMIZED LOGIN SCENE --- */
+        #loginScene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #3a001a 0%, #1f000e 60%, #0d0006 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .helicopter-wrapper {
+            position: absolute;
+            top: 10%;
+            animation: uniqueFlyIn 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards,
+                       hoverMotion 2s ease-in-out infinite 3.5s;
+            z-index: 10;
+        }
+
+        .helicopter {
+            position: relative;
+            width: 110px;
+            height: 55px;
+            filter: drop-shadow(0 10px 10px rgba(255,20,147,0.4));
+        }
+
+        .heli-body {
+            position: absolute;
+            width: 75px;
+            height: 36px;
+            background: linear-gradient(135deg, #ff007f, #d6006e, #800040);
+            border-radius: 35px 45px 25px 18px;
+            top: 8px;
+            left: 18px;
+            box-shadow: inset -2px -2px 6px rgba(255,255,255,0.5);
+            border: 1px solid rgba(255,192,203,0.4);
+        }
+
+        .heli-stripe {
+            position: absolute;
+            width: 50px;
+            height: 5px;
+            background: linear-gradient(90deg, #ffcc00, #ff6699);
+            top: 24px;
+            left: 22px;
+            border-radius: 2px;
+        }
+
+        .heli-window {
+            position: absolute;
+            width: 24px;
+            height: 18px;
+            background: linear-gradient(135deg, #ffe6f2, #ff66b2);
+            border-radius: 0 18px 10px 0;
+            top: 11px;
+            left: 60px;
+        }
+
+        .heli-tail {
+            position: absolute;
+            width: 42px;
+            height: 7px;
+            background: linear-gradient(90deg, #33001a, #660033);
+            top: 18px;
+            left: -18px;
+            border-radius: 3px;
+        }
+
+        .tail-rotor {
+            position: absolute;
+            width: 4px;
+            height: 22px;
+            background: #ffcc00;
+            top: 10px;
+            left: -20px;
+            animation: spin 0.08s linear infinite;
+        }
+
+        .main-rotor {
+            position: absolute;
+            width: 130px;
+            height: 3px;
+            background: linear-gradient(90deg, #33001a, #ff007f, #33001a);
+            top: 3px;
+            left: -10px;
+            border-radius: 2px;
+            animation: spin 0.04s linear infinite;
+        }
+
+        .rotor-pole {
+            position: absolute;
+            width: 5px;
+            height: 6px;
+            background: #ffd700;
+            top: 5px;
+            left: 50px;
+        }
+
+        .skid-1 {
+            position: absolute;
+            width: 70px;
+            height: 3px;
+            background: #ffd700;
+            bottom: 2px;
+            left: 20px;
+            border-radius: 2px;
+        }
+        .skid-holder {
+            position: absolute;
+            width: 3px;
+            height: 6px;
+            background: #ffa8d8;
+            bottom: 4px;
+            left: 35px;
+        }
+        .skid-holder.right { left: 68px; }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes uniqueFlyIn {
+            0% { transform: translateX(-500px) translateY(-60px) rotate(-12deg) scale(0.5); }
+            50% { transform: translateX(20px) translateY(-5px) rotate(6deg) scale(1.05); }
+            100% { transform: translateX(0px) translateY(0px) rotate(0deg) scale(1); }
+        }
+
+        @keyframes hoverMotion {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+
+        /* Mobile Friendly Form Box */
+        .paper-container {
+            position: absolute;
+            top: 32%;
+            width: 90%;
+            max-width: 340px;
+            background: rgba(255, 240, 245, 0.96);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 105, 180, 0.5);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(225, 29, 72, 0.4);
+            transform-style: preserve-3d;
+            opacity: 0;
+            animation: dropAndUnfold 2.2s cubic-bezier(0.25, 1, 0.5, 1) 2.2s forwards;
+            padding: 26px 20px;
+            overflow: hidden;
+            color: #4a001a;
+            z-index: 20;
+        }
+
+        @keyframes dropAndUnfold {
+            0% { transform: translateY(-140px) rotateX(90deg) scale(0.1); opacity: 0; }
+            50% { transform: translateY(20px) rotateX(-20deg) scale(0.9); opacity: 1; }
+            100% { transform: translateY(0) rotateX(0deg) scale(1); opacity: 1; }
+        }
+
+        .login-form {
+            width: 100%;
+            opacity: 0;
+            animation: fadeInForm 0.8s ease-in 3.6s forwards;
+        }
+
+        @keyframes fadeInForm {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 16px;
+            color: #be123c;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .field { margin-bottom: 14px; }
+
+        .field input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #f472b6;
+            border-radius: 25px;
+            outline: none;
+            font-size: 16px; /* Mobile-friendly font size to avoid zoom */
+            background: #fff;
+            color: #881337;
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            margin-bottom: 18px;
+            color: #9f1239;
+            font-weight: 500;
+        }
+
+        .options label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .options a { color: #be123c; text-decoration: none; font-weight: 600; }
+
+        .love-submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #e11d48, #f43f5e);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(225, 29, 72, 0.4);
+        }
+
+        /* --- 2. SECRET WEBSITE STYLES (MOBILE RESPONSIVE) --- */
+        #secretWebsite {
+            display: none;
+            opacity: 0;
+            width: 100%;
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #1a000c 0%, #0d0006 70%, #000000 100%);
+            transition: opacity 1s ease;
+        }
+
+        .font-handwriting { font-family: 'Dancing Script', cursive; }
+        .font-romantic { font-family: 'Great Vibes', cursive; }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(225, 29, 72, 0.25);
+        }
+
+        #particleCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes heartPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse-heart { animation: heartPulse 1.5s infinite ease-in-out; }
+
+        /* Mobile Envelope Styles */
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            perspective: 1200px;
+            margin-top: 10px;
+        }
+
+        .envelope {
+            width: 280px;
+            height: 190px;
+            background: linear-gradient(135deg, #be123c, #881337);
+            position: relative;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(225, 29, 72, 0.5);
+            border: 1px solid rgba(255, 182, 193, 0.4);
+        }
+
+        @media (min-width: 640px) {
+            .envelope { width: 380px; height: 240px; }
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            border-top: 105px solid #e11d48;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            transform-origin: top;
+            transition: transform 0.7s 0.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.2s ease;
+            z-index: 3;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+        }
+
+        @media (min-width: 640px) {
+            .envelope::before {
+                border-top-width: 130px;
+                border-left-width: 190px;
+                border-right-width: 190px;
+            }
+        }
+
+        .envelope.open::before {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .envelope-seal {
+            position: absolute;
+            top: 45%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 36px; height: 36px;
+            background: radial-gradient(circle, #ffe066 0%, #d4af37 70%, #996515 100%);
+            border-radius: 50%;
+            z-index: 4;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            color: #5c3a00; font-size: 16px;
+        }
+
+        .envelope.open .envelope-seal {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0);
+        }
+
+        .envelope-pocket {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, #700b27, #9f1239);
+            clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%);
+            border-radius: 0 0 10px 10px;
+            z-index: 2;
+        }
+
+        .letter {
+            position: absolute;
+            bottom: 10px; left: 4%; width: 92%; height: 86%;
+            background: #fffdfa; color: #4a0404; border-radius: 6px; padding: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transition: transform 0.8s 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.6s 0.3s ease;
+            z-index: 1; opacity: 0; overflow-y: auto;
+            border: 1px solid #fecdd3;
+        }
+
+        .envelope.open .letter {
+            transform: translateY(-165px) scale(1.02);
+            opacity: 1;
+            z-index: 5;
+        }
+
+        @media (min-width: 640px) {
+            .envelope.open .letter {
+                transform: translateY(-210px) scale(1.05);
+            }
+        }
+
+        .glow-btn {
+            box-shadow: 0 0 15px rgba(225, 29, 72, 0.6);
+            transition: all 0.3s ease;
+        }
+        
+        .letter::-webkit-scrollbar { width: 3px; }
+        .letter::-webkit-scrollbar-thumb { background: #f43f5e; border-radius: 3px; }
+    </style>
+</head>
+<body class="relative flex flex-col items-center justify-between min-h-screen px-3 py-4">
+
+    <!-- ==================== 1. MOBILE LOGIN SCENE ==================== -->
+    <div id="loginScene">
+        <canvas id="loginCanvas"></canvas>
+
+        <div class="helicopter-wrapper">
+            <div class="helicopter">
+                <div class="rotor-pole"></div>
+                <div class="main-rotor"></div>
+                <div class="heli-body">
+                    <div class="heli-stripe"></div>
+                </div>
+                <div class="heli-window"></div>
+                <div class="heli-tail"></div>
+                <div class="tail-rotor"></div>
+                <div class="skid-holder"></div>
+                <div class="skid-holder right"></div>
+                <div class="skid-1"></div>
+            </div>
+        </div>
+
+        <div class="paper-container">
+            <div class="login-form">
+                <h2>Welcome Back ❤️</h2>
+                <form id="loginForm">
+                    <div class="field">
+                        <input type="text" id="username" placeholder="Enter your username" autocomplete="username" required>
+                    </div>
+                    <div class="field">
+                        <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
+                    </div>
+                    <div class="options">
+                        <label>
+                            <input type="checkbox"> Remember me
+                        </label>
+                        <a href="#">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="love-submit-btn">Login 💕</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 2. SECRET WEBSITE CONTENT ==================== -->
+    <div id="secretWebsite" class="relative flex flex-col items-center justify-between w-full min-h-screen px-2 py-4">
+
+        <canvas id="particleCanvas"></canvas>
+
+        <audio id="romanticSong" loop preload="auto">
+            <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-love-song-melody-113884.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- Music Toggle -->
+        <div class="fixed top-3 right-3 z-50">
+            <button id="audioToggle" class="glass-card p-2.5 rounded-full flex items-center justify-center text-pink-300 hover:text-white transition duration-300 focus:outline-none">
+                <svg id="musicIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 .895-2 3-2 3 .895 3 2zm12 0c0 1.105-1.343 2-3 2s-3-.895-3-2 .895-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                </svg>
+                <span class="text-xs ml-1 font-medium hidden sm:inline" id="audioStatus">Music: OFF</span>
+            </button>
+        </div>
+
+        <!-- Header -->
+        <header class="text-center z-10 mt-4 max-w-xl px-2">
+            <h1 class="font-romantic text-4xl sm:text-6xl text-pink-300 drop-shadow-[0_0_12px_rgba(244,63,94,0.6)] mb-1">
+                Just For You ❤️
+            </h1>
+            <p class="text-[11px] sm:text-sm text-pink-200 tracking-wider uppercase opacity-80">
+                Tap anywhere on screen for magic
+            </p>
+        </header>
+
+        <!-- Main Section Tabs -->
+        <main class="z-10 w-full max-w-3xl my-auto py-4">
+            <div class="flex justify-center space-x-2 mb-6">
+                <button onclick="switchTab('letter')" id="tab-letter" class="tab-btn active glass-card px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-pink-200 hover:bg-rose-900/40 transition">
+                    💌 Letter
+                </button>
+                <button onclick="switchTab('rose')" id="tab-rose" class="tab-btn glass-card px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-pink-200 hover:bg-rose-900/40 transition">
+                    🌹 Roses
+                </button>
+                <button onclick="switchTab('question')" id="tab-question" class="tab-btn glass-card px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-pink-200 hover:bg-rose-900/40 transition">
+                    💖 Question
+                </button>
+            </div>
+
+            <!-- Tab 1: Secret Letter -->
+            <div id="section-letter" class="tab-content flex flex-col items-center">
+                <div class="text-center mb-4 px-2">
+                    <p class="text-pink-200 text-xs sm:text-base animate-pulse">
+                        Tap the envelope to open your message
+                    </p>
+                </div>
+
+                <div class="envelope-wrapper my-8" onclick="toggleEnvelope()">
+                    <div class="envelope" id="envelope">
+                        <div class="envelope-seal">💖</div>
+                        <div class="envelope-pocket"></div>
+                        <div class="letter text-left flex flex-col justify-between" id="letterCard">
+                            <div class="font-handwriting text-sm sm:text-xl text-rose-900 leading-relaxed font-semibold" id="typewriterText"></div>
+                            <div class="text-right mt-2 font-romantic text-lg sm:text-2xl text-rose-700 font-bold">
+                                — Yours Always ❤️
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Realistic Rose Garden -->
+            <div id="section-rose" class="tab-content hidden flex-col items-center w-full">
+                <div class="glass-card p-4 sm:p-6 rounded-2xl w-full text-center relative overflow-hidden">
+                    <h2 class="font-romantic text-2xl sm:text-4xl text-pink-300 mb-2">Magic Flower Garden</h2>
+                    <p class="text-[11px] sm:text-sm text-pink-100/80 mb-3">
+                        Tap anywhere inside the box to plant blooming glowing roses!
+                    </p>
+                    <div class="relative w-full h-60 sm:h-80 bg-black/40 rounded-xl overflow-hidden border border-pink-500/20 cursor-pointer" id="gardenCanvasContainer">
+                        <canvas id="roseCanvas" class="w-full h-full"></canvas>
+                        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 pointer-events-none text-[10px] text-pink-300/60 bg-black/50 px-2.5 py-0.5 rounded-full">
+                            ✨ Tap to bloom ✨
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Confession Question -->
+            <div id="section-question" class="tab-content hidden flex-col items-center">
+                <div class="glass-card p-6 sm:p-10 rounded-3xl w-full text-center max-w-xl mx-auto border border-rose-500/30">
+                    <div class="text-4xl sm:text-6xl mb-3 pulse-heart inline-block">💖</div>
+                    <h2 class="font-romantic text-3xl sm:text-5xl text-pink-200 mb-3">
+                        A Simple Question...
+                    </h2>
+                    <p class="text-xs sm:text-base text-pink-100 font-light mb-6 leading-relaxed px-2">
+                        "I didn't choose to fall for you, it just happened naturally. Will you walk this romantic journey with me and give us a chance?"
+                    </p>
+
+                    <div class="relative flex flex-col sm:flex-row items-center justify-center gap-4 min-h-[100px]" id="buttonContainer">
+                        <button id="yesBtn" onclick="handleYesClick()" class="glow-btn bg-gradient-to-r from-rose-500 to-pink-600 text-white font-semibold text-base px-6 py-2.5 rounded-full transition transform active:scale-95 w-32">
+                            Yes! 💕
+                        </button>
+
+                        <button id="noBtn" class="bg-gray-700/60 text-gray-300 font-medium text-sm px-6 py-2.5 rounded-full transition duration-200 absolute sm:relative w-32 border border-gray-500/30">
+                            No 🙈
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Success Modal -->
+        <div id="successModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition duration-500">
+            <div class="glass-card p-6 sm:p-10 rounded-3xl text-center max-w-md w-full border border-pink-500/40 transform scale-90 transition duration-500" id="successModalContent">
+                <div class="text-5xl mb-2">🎉🌹✨</div>
+                <h3 class="font-romantic text-3xl sm:text-5xl text-pink-300 mb-2">You Made My World Sparkle!</h3>
+                <p class="text-pink-100 text-xs sm:text-base leading-relaxed mb-5 px-2">
+                    Thank you for accepting! This is the beginning of something truly beautiful. I promise to make you smile every single day! ❤️
+                </p>
+                <button onclick="closeModal()" class="glow-btn bg-rose-600 hover:bg-rose-500 text-white font-medium px-5 py-2 rounded-full text-xs sm:text-sm">
+                    Forever Starts Now 💫
+                </button>
+            </div>
+        </div>
+
+        <footer class="z-10 text-center text-[10px] text-pink-300/50 py-2">
+            Made with pure love & heart ❤️
+        </footer>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const loginCanvas = document.getElementById('loginCanvas');
+        const lCtx = loginCanvas.getContext('2d');
+
+        let lw = loginCanvas.width = window.innerWidth;
+        let lh = loginCanvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            lw = loginCanvas.width = window.innerWidth;
+            lh = loginCanvas.height = window.innerHeight;
+        });
+
+        const ambientHearts = [];
+        const loginExplosions = [];
+
+        class AmbientHeart {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * lw;
+                this.y = lh + 20;
+                this.size = Math.random() * 12 + 6;
+                this.speedY = Math.random() * 1 + 0.3;
+                this.alpha = Math.random() * 0.5 + 0.2;
+                this.color = `hsl(${Math.random() * 30 + 330}, 100%, 70%)`;
+            }
+            draw() {
+                lCtx.save();
+                lCtx.translate(this.x, this.y);
+                lCtx.globalAlpha = this.alpha;
+                lCtx.fillStyle = this.color;
+                lCtx.beginPath();
+                const topCurveHeight = this.size * 0.3;
+                lCtx.moveTo(0, topCurveHeight);
+                lCtx.bezierCurveTo(0, 0, -this.size / 2, 0, -this.size / 2, topCurveHeight);
+                lCtx.bezierCurveTo(-this.size / 2, (this.size + topCurveHeight) / 2, 0, this.size, 0, this.size * 1.2);
+                lCtx.bezierCurveTo(0, this.size, this.size / 2, (this.size + topCurveHeight) / 2, this.size / 2, topCurveHeight);
+                lCtx.bezierCurveTo(this.size / 2, 0, 0, 0, 0, topCurveHeight);
+                lCtx.closePath();
+                lCtx.fill();
+                lCtx.restore();
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += Math.sin(this.y * 0.01) * 0.5;
+                if (this.y < -30) this.reset();
+            }
+        }
+
+        class LoveBlastParticle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 8 + 4;
+                this.color = `hsl(${Math.random() * 40 + 330}, 100%, 65%)`;
+                this.vx = (Math.random() - 0.5) * 6;
+                this.vy = (Math.random() - 0.5) * 6 - 2;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.02 + 0.01;
+                this.rotation = Math.random() * Math.PI * 2;
+            }
+            draw() {
+                lCtx.save();
+                lCtx.translate(this.x, this.y);
+                lCtx.rotate(this.rotation);
+                lCtx.globalAlpha = this.alpha;
+                lCtx.fillStyle = this.color;
+                lCtx.beginPath();
+                const topCurveHeight = this.size * 0.3;
+                lCtx.moveTo(0, topCurveHeight);
+                lCtx.bezierCurveTo(0, 0, -this.size / 2, 0, -this.size / 2, topCurveHeight);
+                lCtx.bezierCurveTo(-this.size / 2, (this.size + topCurveHeight) / 2, 0, this.size, 0, this.size * 1.2);
+                lCtx.bezierCurveTo(0, this.size, this.size / 2, (this.size + topCurveHeight) / 2, this.size / 2, topCurveHeight);
+                lCtx.bezierCurveTo(this.size / 2, 0, 0, 0, 0, topCurveHeight);
+                lCtx.closePath();
+                lCtx.fill();
+                lCtx.restore();
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.05;
+                this.alpha -= this.decay;
+            }
+        }
+
+        for (let i = 0; i < 30; i++) {
+            const ah = new AmbientHeart();
+            ah.y = Math.random() * lh;
+            ambientHearts.push(ah);
+        }
+
+        function createLoginLoveBlast(x, y) {
+            for (let i = 0; i < 20; i++) {
+                loginExplosions.push(new LoveBlastParticle(x, y));
+            }
+        }
+
+        const loginSceneElement = document.getElementById('loginScene');
+        loginSceneElement.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+                createLoginLoveBlast(e.clientX, e.clientY);
+            }
+        });
+        loginSceneElement.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0 && e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+                createLoginLoveBlast(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        function animateLoginBackground() {
+            lCtx.clearRect(0, 0, lw, lh);
+            ambientHearts.forEach(h => { h.update(); h.draw(); });
+            for (let i = loginExplosions.length - 1; i >= 0; i--) {
+                loginExplosions[i].update();
+                loginExplosions[i].draw();
+                if (loginExplosions[i].alpha <= 0) loginExplosions.splice(i, 1);
+            }
+            requestAnimationFrame(animateLoginBackground);
+        }
+        animateLoginBackground();
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const loginScene = document.getElementById('loginScene');
+            const secretWebsite = document.getElementById('secretWebsite');
+
+            loginScene.style.opacity = '0';
+            loginScene.style.transform = 'scale(0.8)';
+            
+            setTimeout(() => {
+                loginScene.style.display = 'none';
+                secretWebsite.style.display = 'flex';
+                setTimeout(() => {
+                    secretWebsite.style.opacity = '1';
+                    resizeCanvas();
+                    animateParticles();
+                    switchTab('letter');
+                }, 50);
+            }, 800);
+        });
+
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        const particles = [];
+        const heartShapes = [];
+
+        class HeartParticle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 8 + 4;
+                this.color = color || `hsl(${Math.random() * 40 + 330}, 100%, 65%)`;
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4 - 2;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.008;
+                this.rotation = Math.random() * Math.PI * 2;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                const topCurveHeight = this.size * 0.3;
+                ctx.moveTo(0, topCurveHeight);
+                ctx.bezierCurveTo(0, 0, -this.size / 2, 0, -this.size / 2, topCurveHeight);
+                ctx.bezierCurveTo(-this.size / 2, (this.size + topCurveHeight) / 2, 0, this.size, 0, this.size * 1.2);
+                ctx.bezierCurveTo(0, this.size, this.size / 2, (this.size + topCurveHeight) / 2, this.size / 2, topCurveHeight);
+                ctx.bezierCurveTo(this.size / 2, 0, 0, 0, 0, topCurveHeight);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.05;
+                this.alpha -= this.decay;
+            }
+        }
+
+        class BackgroundHeart {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * (width || window.innerWidth);
+                this.y = (height || window.innerHeight) + 20;
+                this.size = Math.random() * 10 + 5;
+                this.speedY = Math.random() * 1.2 + 0.4;
+                this.alpha = Math.random() * 0.5 + 0.2;
+                this.color = `hsl(${Math.random() * 30 + 330}, 90%, 70%)`;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                const topCurveHeight = this.size * 0.3;
+                ctx.moveTo(0, topCurveHeight);
+                ctx.bezierCurveTo(0, 0, -this.size / 2, 0, -this.size / 2, topCurveHeight);
+                ctx.bezierCurveTo(-this.size / 2, (this.size + topCurveHeight) / 2, 0, this.size, 0, this.size * 1.2);
+                ctx.bezierCurveTo(0, this.size, this.size / 2, (this.size + topCurveHeight) / 2, this.size / 2, topCurveHeight);
+                ctx.bezierCurveTo(this.size / 2, 0, 0, 0, 0, topCurveHeight);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += Math.sin(this.y * 0.01) * 0.4;
+                if (this.y < -30) this.reset();
+            }
+        }
+
+        for (let i = 0; i < 25; i++) {
+            const bh = new BackgroundHeart();
+            bh.y = Math.random() * window.innerHeight;
+            heartShapes.push(bh);
+        }
+
+        function createHeartBurst(x, y) {
+            for (let i = 0; i < 20; i++) {
+                particles.push(new HeartParticle(x, y));
+            }
+        }
+
+        window.addEventListener('click', (e) => {
+            if (document.getElementById('secretWebsite').style.display === 'flex') {
+                if (e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
+                    createHeartBurst(e.clientX, e.clientY);
+                }
+            }
+        });
+
+        window.addEventListener('touchstart', (e) => {
+            if (document.getElementById('secretWebsite').style.display === 'flex') {
+                if (e.touches.length > 0) {
+                    const touch = e.touches[0];
+                    if (touch.target.tagName !== 'BUTTON' && !touch.target.closest('button')) {
+                        createHeartBurst(touch.clientX, touch.clientY);
+                    }
+                }
+            }
+        }, { passive: true });
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            heartShapes.forEach(heart => { heart.update(); heart.draw(); });
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].alpha <= 0) particles.splice(i, 1);
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('flex');
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-rose-600', 'text-white');
+                btn.classList.add('glass-card', 'text-pink-200');
+            });
+
+            const activeContent = document.getElementById(`section-${tabName}`);
+            activeContent.classList.remove('hidden');
+            activeContent.classList.add('flex');
+
+            const activeTab = document.getElementById(`tab-${tabName}`);
+            activeTab.classList.add('bg-rose-600', 'text-white');
+            activeTab.classList.remove('glass-card', 'text-pink-200');
+
+            if (tabName === 'rose') {
+                resizeGardenCanvas();
+            }
+        }
+
+        let isOpen = false;
+        let isTyping = false;
+        const letterMessage = "From the moment you entered my life, everything felt brighter and infinitely warmer. Every smile of yours feels like poetry, and I couldn't hold these feelings inside any longer. You are truly special to me...";
+
+        function toggleEnvelope() {
+            const envelope = document.getElementById('envelope');
+            if (!isOpen) {
+                envelope.classList.add('open');
+                isOpen = true;
+                if (!isTyping) {
+                    startTypewriter();
+                }
+            } else {
+                envelope.classList.remove('open');
+                isOpen = false;
+            }
+        }
+
+        function startTypewriter() {
+            isTyping = true;
+            const element = document.getElementById('typewriterText');
+            element.innerHTML = '';
+            let index = 0;
+            function type() {
+                if (index < letterMessage.length) {
+                    element.innerHTML += letterMessage.charAt(index);
+                    index++;
+                    setTimeout(type, 40);
+                }
+            }
+            type();
+        }
+
+        const gardenCanvas = document.getElementById('roseCanvas');
+        const gCtx = gardenCanvas.getContext('2d');
+        const gardenContainer = document.getElementById('gardenCanvasContainer');
+
+        function resizeGardenCanvas() {
+            gardenCanvas.width = gardenContainer.clientWidth;
+            gardenCanvas.height = gardenContainer.clientHeight;
+        }
+
+        class RealisticRose {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.targetRadius = Math.random() * 8 + 24;
+                this.currentProgress = 0;
+                this.bloomSpeed = 0.012 + Math.random() * 0.008;
+                this.rotationAngle = Math.random() * Math.PI * 2;
+                this.hue = Math.random() * 12 + 342;
+                this.sparkles = [];
+            }
+
+            drawSinglePetal(radius, angle, color) {
+                gCtx.save();
+                gCtx.rotate(angle);
+                gCtx.beginPath();
+                gCtx.fillStyle = color;
+                gCtx.moveTo(0, 0);
+                gCtx.bezierCurveTo(-radius * 0.88, -radius * 0.68, -radius * 0.78, -radius * 1.38, 0, -radius * 1.48);
+                gCtx.bezierCurveTo(radius * 0.78, -radius * 1.38, radius * 0.88, -radius * 0.68, 0, 0);
+                gCtx.fill();
+                gCtx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+                gCtx.lineWidth = 1;
+                gCtx.stroke();
+                gCtx.restore();
+            }
+
+            drawLeaves(progress) {
+                gCtx.save();
+                const leafSize = this.targetRadius * progress * 0.95;
+                gCtx.fillStyle = '#1e5128';
+                gCtx.beginPath();
+                gCtx.ellipse(-leafSize * 1.1, leafSize * 0.5, leafSize * 0.8, leafSize * 0.35, Math.PI / 3.8, 0, Math.PI * 2);
+                gCtx.fill();
+                gCtx.fillStyle = '#2e7d32';
+                gCtx.beginPath();
+                gCtx.ellipse(leafSize * 1.1, leafSize * 0.5, leafSize * 0.8, leafSize * 0.35, -Math.PI / 3.8, 0, Math.PI * 2);
+                gCtx.fill();
+                gCtx.restore();
+            }
+
+            draw() {
+                const progress = Math.sin((this.currentProgress * Math.PI) / 2);
+                const currentRadius = this.targetRadius * progress;
+
+                gCtx.save();
+                gCtx.translate(this.x, this.y);
+
+                gCtx.strokeStyle = '#2d6a4f';
+                gCtx.lineWidth = 3;
+                gCtx.beginPath();
+                gCtx.moveTo(0, 0);
+                gCtx.quadraticCurveTo(8, currentRadius * 1.5, 0, currentRadius * 3);
+                gCtx.stroke();
+
+                this.drawLeaves(progress);
+
+                gCtx.save();
+                gCtx.rotate(this.rotationAngle + (1 - progress) * 1.1);
+
+                const outerCount = 8;
+                for (let i = 0; i < outerCount; i++) {
+                    const angle = (i * Math.PI * 2) / outerCount;
+                    const color = `hsl(${this.hue}, 88%, 30%)`;
+                    this.drawSinglePetal(currentRadius, angle, color);
+                }
+
+                const midCount = 6;
+                for (let i = 0; i < midCount; i++) {
+                    const angle = (i * Math.PI * 2) / midCount + 0.4;
+                    const color = `hsl(${this.hue + 6}, 94%, 48%)`;
+                    this.drawSinglePetal(currentRadius * 0.65, angle, color);
+                }
+
+                gCtx.fillStyle = '#ffeaa7';
+                gCtx.beginPath();
+                gCtx.arc(0, 0, currentRadius * 0.16, 0, Math.PI * 2);
+                gCtx.fill();
+
+                gCtx.restore();
+
+                this.sparkles.forEach(s => {
+                    gCtx.fillStyle = `rgba(255, 223, 0, ${s.alpha})`;
+                    gCtx.beginPath();
+                    gCtx.arc(s.dx * progress, s.dy * progress, s.size, 0, Math.PI * 2);
+                    gCtx.fill();
+                });
+
+                gCtx.restore();
+            }
+
+            update() {
+                if (this.currentProgress < 1) {
+                    this.currentProgress += this.bloomSpeed;
+                    if (Math.random() < 0.3) {
+                        this.sparkles.push({
+                            dx: (Math.random() - 0.5) * this.targetRadius * 2,
+                            dy: (Math.random() - 0.5) * this.targetRadius * 2,
+                            size: Math.random() * 2 + 1,
+                            alpha: 1
+                        });
+                    }
+                }
+                this.sparkles.forEach(s => { s.alpha -= 0.02; });
+                this.sparkles = this.sparkles.filter(s => s.alpha > 0);
+            }
+        }
+
+        const roses = [];
+
+        function animateGarden() {
+            gCtx.fillStyle = 'rgba(10, 2, 8, 0.2)';
+            gCtx.fillRect(0, 0, gardenCanvas.width, gardenCanvas.height);
+            roses.forEach(rose => { rose.update(); rose.draw(); });
+            requestAnimationFrame(animateGarden);
+        }
+        animateGarden();
+
+        function addRose(e) {
+            const rect = gardenCanvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            if (clientX && clientY) {
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+                roses.push(new RealisticRose(x, y));
+            }
+        }
+
+        gardenContainer.addEventListener('click', addRose);
+        gardenContainer.addEventListener('touchstart', addRose, { passive: true });
+
+        const noBtn = document.getElementById('noBtn');
+        const container = document.getElementById('buttonContainer');
+
+        function moveNoButton() {
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            const maxX = containerRect.width - btnRect.width;
+            const maxY = containerRect.height - btnRect.height;
+            const randomX = Math.random() * maxX - (maxX / 2);
+            const randomY = Math.random() * maxY - (maxY / 2);
+            noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        }
+
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveNoButton();
+        });
+
+        function handleYesClick() {
+            for (let i = 0; i < 60; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    createHeartBurst(x, y);
+                }, i * 20);
+            }
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('successModalContent');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-90');
+            modalContent.classList.add('scale-100');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('successModalContent');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-90');
+        }
+
+        let isSongPlaying = false;
+        const song = document.getElementById('romanticSong');
+        const audioToggle = document.getElementById('audioToggle');
+        const audioStatus = document.getElementById('audioStatus');
+
+        function toggleAudio() {
+            if (isSongPlaying) {
+                song.pause();
+                isSongPlaying = false;
+                audioStatus.textContent = "Music: OFF";
+                audioToggle.classList.remove('border-pink-500', 'bg-rose-900/50');
+            } else {
+                song.play().catch(e => console.log("Audio play restricted"));
+                isSongPlaying = true;
+                audioStatus.textContent = "Music: ON";
+                audioToggle.classList.add('border-pink-500', 'bg-rose-900/50');
+            }
+        }
+        audioToggle.addEventListener('click', toggleAudio);
+    </script>
+</body>
+</html>
